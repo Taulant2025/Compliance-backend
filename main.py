@@ -13,7 +13,7 @@ app = FastAPI()
 # Allow frontend (we'll hook React later)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Or restrict to your frontend domain later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
