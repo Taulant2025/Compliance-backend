@@ -11,11 +11,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize app
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
 
-# ✅ CORS Middleware — THIS is critical
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can replace * with your Vercel URL for security
+    allow_origins=["*"],  # Later we’ll lock this to your Vercel URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
