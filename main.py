@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.post("/analyze/")
 async def analyze(file: UploadFile = File(...)):
     if not file.filename.endswith(".pdf"):
