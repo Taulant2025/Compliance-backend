@@ -4,3 +4,7 @@ python-multipart
 openai==0.28
 PyMuPDF
 python-dotenv
+requests
+tqdm
+aiohttp
+gunicorn
