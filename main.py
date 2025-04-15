@@ -10,10 +10,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
-# Allow frontend (we'll hook React later)
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or restrict to your frontend domain later
+    allow_origins=["*"],  # you can later limit this to ["https://compliance-frontend12.vercel.app"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
