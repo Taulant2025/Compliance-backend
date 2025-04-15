@@ -15,7 +15,7 @@ app = FastAPI()
 # ✅ CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can later lock this to your Vercel domain
+    allow_origins=["*"],  # You can later lock this to your frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,5 +25,23 @@ app.add_middleware(
 async def analyze(file: UploadFile = File(...)):
     try:
         content = await extract_text_from_pdf(file)
+
         response = openai.ChatCompletion.create(
-            model="
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a compliance assistant for international trade contracts.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Analyze this contract and tell me what's missing:\n\n{content}",
+                },
+            ],
+            temperature=0.3,
+        )
+
+        return {"analysis": response.choices[0].message.content}
+
+    except Exception as e:
+        return {"error": str(e)}
