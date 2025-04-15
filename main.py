@@ -1,54 +1,33 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from utils import extract_text_from_pdf
+from dotenv import load_dotenv
 import openai
 import os
-from dotenv import load_dotenv
+from utils import extract_text_from_pdf
 
+# Load environment variables
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Initialize app
 app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
-
+# ✅ CORS Middleware — THIS is critical
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # you can later limit this to ["https://compliance-frontend12.vercel.app"]
+    allow_origins=["*"],  # You can replace * with your Vercel URL for security
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
 @app.post("/analyze/")
 async def analyze(file: UploadFile = File(...)):
-    if not file.filename.endswith(".pdf"):
-        return {"error": "Only PDF files are supported at the moment."}
-
-    content = await extract_text_from_pdf(file)
-
-    prompt = f"""
-You are a compliance analyst. Read this contract and identify missing or weak clauses related to:
-1. Sanctions
-2. Force majeure
-3. Payment terms
-4. Incoterms
-5. Dispute resolution
-Give a summary in bullet points.
-Contract:
-{content}
-"""
-
-    response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a legal compliance expert."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3
-    )
-
-    return {
-        "analysis": response["choices"][0]["message"]["content"]
-    }
+    try:
+        content = await extract_text_from_pdf(file)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content
